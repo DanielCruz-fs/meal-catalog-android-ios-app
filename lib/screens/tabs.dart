@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meals_app/models/meal.dart';
 import 'package:meals_app/screens/categories.dart';
+import 'package:meals_app/screens/filters.dart';
 import 'package:meals_app/screens/meals.dart';
 import 'package:meals_app/widgets/main_drawer.dart';
 
@@ -46,6 +47,22 @@ class _TabsScreenState extends State<TabsScreen> {
     setState(() => _selectedPageIndex = index);
   }
 
+  void _setScreen(String identifier) {
+    Navigator.of(context).pop();
+
+    // why use 'pushReplacement' instead of 'push'?
+    /**
+     * The 'pushReplacement' method replaces the current screen with the new screen.
+     * This is useful when you don't want the user to navigate back to the previous screen.
+     * In this case, we don't want the user to navigate back to the 'CategoriesScreen' after
+     * selecting the 'Filters' screen.
+     */
+    if (identifier == 'filters') {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (ctx) => const FiltersScreen()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget activePage = CategoriesScreen(
@@ -67,7 +84,9 @@ class _TabsScreenState extends State<TabsScreen> {
           activePageTitle,
         ),
       ),
-      drawer: const MainDrawer(),
+      drawer: MainDrawer(
+        onSelectedScreen: _setScreen,
+      ),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
