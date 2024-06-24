@@ -47,7 +47,7 @@ class _TabsScreenState extends State<TabsScreen> {
     setState(() => _selectedPageIndex = index);
   }
 
-  void _setScreen(String identifier) {
+  void _setScreen(String identifier) async {
     Navigator.of(context).pop();
 
     // why use 'pushReplacement' instead of 'push'?
@@ -56,10 +56,14 @@ class _TabsScreenState extends State<TabsScreen> {
      * This is useful when you don't want the user to navigate back to the previous screen.
      * In this case, we don't want the user to navigate back to the 'CategoriesScreen' after
      * selecting the 'Filters' screen.
+     * I use Push because I want to return the filter values from PopScope widget
      */
     if (identifier == 'filters') {
-      Navigator.of(context).pushReplacement(
+      // final result = await Navigator.of(context).pushReplacement(
+      final result = await Navigator.of(context).push<Map<Filter, bool>>(
           MaterialPageRoute(builder: (ctx) => const FiltersScreen()));
+
+      print(result);
     }
   }
 
