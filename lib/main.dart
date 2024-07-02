@@ -13,6 +13,7 @@ final theme = ThemeData(
 );
 
 void main() {
+  // we use ProviderScope to provide the providers therefore we can use them in the entire app
   runApp(
     const ProviderScope(
       child: App(),
