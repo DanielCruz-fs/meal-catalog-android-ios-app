@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meals_app/providers/favorites_provider.dart';
+import 'package:meals_app/providers/filters_provider.dart';
 import 'package:meals_app/providers/meals_provider.dart';
 import 'package:meals_app/screens/categories.dart';
 import 'package:meals_app/screens/filters.dart';
 import 'package:meals_app/screens/meals.dart';
 import 'package:meals_app/widgets/main_drawer.dart';
 
+// when using a provider, we need to import it
+// then we need consumerstatefulwidget to use the provider
+// or consumerwidget to use the provider depending on the widget type
+// then we use consumerstate to get the provider value
+// then we use ref.watch to watch the provider value
+// then we use ref.read to read the provider value
 class TabsScreen extends ConsumerStatefulWidget {
   const TabsScreen({super.key});
 
@@ -18,12 +25,6 @@ class TabsScreen extends ConsumerStatefulWidget {
 
 class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedPageIndex = 0;
-  Map<Filter, bool> _selectedFilters = {
-    Filter.vegan: false,
-    Filter.vegetarian: false,
-    Filter.glutenFree: false,
-    Filter.lactoseFree: false,
-  };
 
   void _selectPage(int index) {
     setState(() => _selectedPageIndex = index);
@@ -42,35 +43,30 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
      */
     if (identifier == 'filters') {
       // final result = await Navigator.of(context).pushReplacement(
-      final result =
-          await Navigator.of(context).push<Map<Filter, bool>>(MaterialPageRoute(
-              builder: (ctx) => FiltersScreen(
-                    currentFilters: _selectedFilters,
-                  )));
-
-      setState(() {
-        _selectedFilters = result ?? _selectedFilters;
-      });
+      await Navigator.of(context).push<Map<Filter, bool>>(
+          MaterialPageRoute(builder: (ctx) => const FiltersScreen()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // wathc the mealsProvider because we want to filter the meals based on the selected filters
+    // ref is the ConsumerState object
+    // watch the mealsProvider because we want to filter the meals based on the selected filters
     // watch will rebuild the widget when the value of the provider changes
     final meals = ref.watch(mealsProvider);
 
+    final activeFilters = ref.watch(filtersProvider);
     final availableMeals = meals.where((meal) {
-      if (_selectedFilters[Filter.vegan]! && !meal.isVegan) {
+      if (activeFilters[Filter.vegan]! && !meal.isVegan) {
         return false;
       }
-      if (_selectedFilters[Filter.vegetarian]! && !meal.isVegetarian) {
+      if (activeFilters[Filter.vegetarian]! && !meal.isVegetarian) {
         return false;
       }
-      if (_selectedFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
+      if (activeFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
         return false;
       }
-      if (_selectedFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
+      if (activeFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
         return false;
       }
       return true;
@@ -82,6 +78,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     var activePageTitle = 'Categories';
 
     if (_selectedPageIndex == 1) {
+      // the 'state' property is extracted from the 'StateNotifierProvider'
       final favoriteMeals = ref.watch(favoriteMealsProvider);
 
       activePage = MealsScreen(

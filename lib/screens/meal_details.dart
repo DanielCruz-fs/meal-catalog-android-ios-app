@@ -8,6 +8,12 @@ class MealDetailsScreen extends ConsumerWidget {
 
   const MealDetailsScreen({super.key, required this.meal});
 
+  // Once extending ConsumerWidget, we get a second parameter called ref
+  // This ref parameter is used to read or watch providers
+
+  // Then we access the notifier of the favoriteMealsProvider
+  // because it returns a StateNotifierProvider that provides an instance of FavoriteMealsNotifier
+  // hence, we can access the toggleMealFavoriteStatus method
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
